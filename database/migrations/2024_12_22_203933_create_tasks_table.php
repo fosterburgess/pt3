@@ -15,6 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('status')->nullable();
+            $table->date('start_date')->nullable();
+            $table->date('due_date')->nullable();
+            $table->date('completed_date')->nullable();
             $table->text('description')->nullable();
             $table->integer('project_id');
             $table->integer('sort_order')->default(0)->nullable();
