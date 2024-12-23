@@ -6,6 +6,7 @@ use App\Const\TaskStatus;
 use App\Enums\TaskStatusEnum;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Resources\Components\Tab;
 use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -40,7 +41,8 @@ class TasksRelationManager extends RelationManager
             ->recordTitleAttribute('title')
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
-                Tables\Columns\TextColumn::make('status'),
+                Tables\Columns\TextColumn::make('status')
+                    ->formatStateUsing(fn($state) => TaskStatus::OPTIONS[$state]),
             ])
             ->filters([
                 //
@@ -58,4 +60,22 @@ class TasksRelationManager extends RelationManager
                 ]),
             ]);
     }
+
+    public function getTabs(): array
+    {
+        $tabList = [];
+        $tabList['all'] = Tab::make()
+            ->badge(count($this->ownerRecord->tasks));
+
+        foreach(TaskStatus::OPTIONS as $key => $value) {
+            $tabList[$key] = Tab::make()
+                ->badge(count($this->ownerRecord->tasks()->where('status', $key)->get()))
+                ->modifyQueryUsing(fn(Builder $query) => $query->where('status', $key));
+
+        }
+
+
+        return $tabList;
+    }
+
 }
