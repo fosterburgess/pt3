@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->text('description')->nullable();
             $table->integer('project_id');
+            $table->integer('sort_order')->default(0)->nullable();
             $table->softDeletes();
             $table->timestamps();
         });
