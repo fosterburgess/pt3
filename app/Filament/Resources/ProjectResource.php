@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -87,7 +88,17 @@ class ProjectResource extends Resource
                     ->icon('heroicon-o-plus')
                     ->label('Task')
                     ->form($form->getComponents())
-
+                    ->mutateFormDataUsing(function($data, $record) {
+                        $data['project_id'] = $record->id;
+                        return $data;
+                    })
+                    ->action(fn($record, $data) => $record->tasks()->create($data))
+                ->after(function($record) {
+                    Notification::make()
+                        ->body("Task created successfully")
+                        ->success()
+                        ->send();
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
