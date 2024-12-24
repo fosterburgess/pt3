@@ -65,10 +65,9 @@ class ProjectResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->formatStateUsing(fn($state) => $state?->format('m/d/Y')),
-                Tables\Columns\TextColumn::make('deleted_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('tasks_count')
+                    ->label('Tasks')
+                    ->counts('tasks'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
