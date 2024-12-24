@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
+use App\Forms\CreateTask;
 use App\Models\Project;
 use Carbon\Carbon;
 use Filament\Forms;
@@ -52,6 +53,9 @@ class ProjectResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $form = Form::make($table->getLivewire());
+        $form = CreateTask::addDefinition($form);
+
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('title')
@@ -80,6 +84,11 @@ class ProjectResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('add-task')
+                    ->icon('heroicon-o-plus')
+                    ->label('Task')
+                    ->form($form->getComponents())
+
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
