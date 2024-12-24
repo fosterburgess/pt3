@@ -3,11 +3,8 @@
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use App\Const\TaskStatus;
-use App\Enums\TaskStatusEnum;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -15,7 +12,6 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 class TasksRelationManager extends RelationManager
@@ -86,8 +82,6 @@ class TasksRelationManager extends RelationManager
 
                 ])
             ])
-
-//            ->recordUrl(fn($record) => route('filament.main.resources.tasks.view', $record))
             ->filters([
                 //
             ])
