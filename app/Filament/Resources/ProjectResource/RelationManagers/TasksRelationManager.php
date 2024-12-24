@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use App\Const\TaskStatus;
+use App\Forms\CreateTask;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
@@ -20,44 +21,7 @@ class TasksRelationManager extends RelationManager
 
     public function form(Form $form): Form
     {
-        return $form
-            ->columns([
-                'sm' => 1,
-                'lg' => 2,
-            ])
-            ->schema([
-                Grid::make()
-                    ->columnSpan(1)
-                    ->schema([
-                        Forms\Components\TextInput::make('title')
-                            ->columnSpanFull()
-                            ->required()
-                            ->maxLength(255),
-                        Forms\Components\Textarea::make('description')
-                            ->columnSpanFull()
-                            ->rows(4),
-                        Forms\Components\Select::make('status')
-                            ->columnSpanFull()
-                            ->options(
-                                TaskStatus::OPTIONS
-                            ),
-                    ]),
-                Grid::make()
-                    ->columnSpan(1)
-                    ->schema([
-                        Forms\Components\DatePicker::make('start_date')
-                            ->columnSpan(1)
-                            ->default(fn() => now()),
-                        Forms\Components\DatePicker::make('due_date')
-                            ->columns(2)
-                            ->columnSpan(1)
-                            ->default(fn() => now()->addDays(7)),
-                        Forms\Components\DatePicker::make('completed_date')
-                            ->columns(2)
-                            ->columnSpan(1),
-                    ]),
-            ]);
-
+        return CreateTask::addDefinition($form);
     }
 
     public function table(Table $table): Table
