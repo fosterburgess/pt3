@@ -32,6 +32,7 @@ class CreateTask
                             ->rows(4),
                         Select::make('status')
                             ->columnSpanFull()
+                            ->default(TaskStatus::__DEFAULT)
                             ->options(
                                 TaskStatus::OPTIONS
                             ),
