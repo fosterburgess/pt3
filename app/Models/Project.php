@@ -11,6 +11,12 @@ class Project extends Model
 {
     use SoftDeletes;
 
+    protected $casts = [
+        'completed_date' => 'date',
+        'start_date' => 'date',
+        'due_date' => 'date',
+    ];
+
     protected $guarded = ['id'];
 
     public function user(): BelongsTo

@@ -5,7 +5,9 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\Project;
+use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -23,11 +25,28 @@ class ProjectResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
+                Grid::make()
+                    ->columnSpan(1)
+                    ->schema([
+                        Forms\Components\TextInput::make('title')
+                            ->columnSpanFull()
+                            ->required()
+                            ->maxLength(255),
+                        Forms\Components\Textarea::make('description')
+                            ->columnSpanFull()
+                    ]),
+                Grid::make()
+                    ->columnSpan(1)
+                    ->schema([
+                        Forms\Components\DatePicker::make('start_date')
+                            ->reactive()
+                            ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('due_date', Carbon::parse($state)->addMonth()->format('Y-m-d')))
+                            ->columnSpan(1),
+                        Forms\Components\DatePicker::make('due_date')
+                            ->columnSpan(1),
+                        Forms\Components\DatePicker::make('completed_date')
+                            ->columnSpan(1),
+                        ]),
             ]);
     }
 
@@ -40,6 +59,8 @@ class ProjectResource extends Resource
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('due_date')
+                    ->formatStateUsing(fn($state) => $state?->format('m/d/Y')),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
