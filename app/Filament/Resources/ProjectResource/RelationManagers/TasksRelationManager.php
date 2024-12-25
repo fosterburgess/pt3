@@ -5,7 +5,6 @@ namespace App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Const\TaskStatus;
 use App\Forms\CreateTask;
 use Filament\Forms;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Components\Tab;
@@ -18,6 +17,13 @@ use Illuminate\Support\Collection;
 class TasksRelationManager extends RelationManager
 {
     protected static string $relationship = 'tasks';
+
+    protected static ?string $title = 'Tasks';
+
+    public static function getDisplayTitle(): ?string
+    {
+        return self::$title;
+    }
 
     public function form(Form $form): Form
     {
