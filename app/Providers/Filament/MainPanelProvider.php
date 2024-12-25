@@ -10,6 +10,7 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -51,6 +52,15 @@ class MainPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->renderHook(name: PanelsRenderHook::RESOURCE_PAGES_LIST_RECORDS_TABS_START,
+            hook: function (...$args) {
+                $manager = $args[0][0];
+                return <<<EOD
+<div class="text-2xl font-bold border-b-2">{$manager::getDisplayTitle()}</div>
+<hr/>
+EOD;
+
+            })
             ->authMiddleware([
                 Authenticate::class,
             ]);
