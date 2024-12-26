@@ -62,4 +62,10 @@ class User extends Authenticatable
         return true;
     }
 
+    public function tasks(): HasMany
+    {
+        return $this->hasMany(Task::class);
+    }
+
+
 }
