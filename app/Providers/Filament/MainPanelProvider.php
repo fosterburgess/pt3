@@ -61,6 +61,7 @@ class MainPanelProvider extends PanelProvider
 EOD;
 
             })
+            ->viteTheme('resources/css/filament/main/theme.css')
             ->authMiddleware([
                 Authenticate::class,
             ]);
