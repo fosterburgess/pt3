@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Const\TaskStatus;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource\RelationManagers;
+use App\Filament\Resources\TaskResource\Widgets\TaskCalendarWidget;
 use App\Forms\CreateTask;
 use App\Models\Task;
 use Filament\Forms;
@@ -82,6 +83,13 @@ class TaskResource extends Resource
             ]);
     }
 
+    public static function getWidgets(): array
+    {
+        return [
+            TaskCalendarWidget::class,
+        ];
+    }
+
     public static function getRelations(): array
     {
         return [
@@ -93,6 +101,7 @@ class TaskResource extends Resource
     {
         return [
             'index' => Pages\ListTasks::route('/'),
+            'calendar' => Pages\ListTasksCalendar::route('/cal'),
             'create' => Pages\CreateTask::route('/create'),
             'view' => Pages\ViewTask::route('/{record}'),
 //            'edit' => Pages\EditTask::route('/{record}/edit'),
@@ -102,6 +111,7 @@ class TaskResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
+            ->where('user_id', auth()->user()->id)
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
