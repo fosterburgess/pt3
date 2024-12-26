@@ -19,7 +19,7 @@ return new class extends Migration
             $table->date('due_date')->nullable();
             $table->date('completed_date')->nullable();
             $table->text('description')->nullable();
-            $table->integer('project_id');
+            $table->integer('project_id')->nullable();
             $table->integer('sort_order')->default(0)->nullable();
             $table->softDeletes();
             $table->timestamps();
