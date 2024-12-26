@@ -46,9 +46,9 @@ class TasksRelationManager extends RelationManager
                 Tables\Columns\Layout\Stack::make([
                     Tables\Columns\TextColumn::make('title'),
                     Tables\Columns\TextColumn::make('due_date')
-                        ->formatStateUsing(fn($state) => "Due: ".$state?->format('m/d/Y')),
+                        ->formatStateUsing(fn($state) => "Due: " . $state?->format('m/d/Y')),
                     Tables\Columns\TextColumn::make('status')
-                      ->formatStateUsing(fn($state) => TaskStatus::OPTIONS[$state]),
+                        ->formatStateUsing(fn($state) => TaskStatus::OPTIONS[$state]),
 
                 ])
             ])
@@ -56,7 +56,10 @@ class TasksRelationManager extends RelationManager
                 //
             ])
             ->headerActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()
+                    ->fillForm([
+                        'project_id' => $this->ownerRecord->id,
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -70,16 +73,16 @@ class TasksRelationManager extends RelationManager
                         ->icon('heroicon-s-check-circle')
                         ->form([
                             Forms\Components\Select::make('status')
-                            ->options(TaskStatus::OPTIONS)
+                                ->options(TaskStatus::OPTIONS)
                         ])
                         ->modalSubmitActionLabel('Change status')
-                        ->action(function (Collection $records, $data){
-                            foreach($records as $record){
+                        ->action(function (Collection $records, $data) {
+                            foreach ($records as $record) {
                                 $record->status = $data['status'];
                                 $record->save();
                             }
                             Notification::make()
-                                ->body("Status changed to ".TaskStatus::OPTIONS[$data['status']])
+                                ->body("Status changed to " . TaskStatus::OPTIONS[$data['status']])
                                 ->success()
                                 ->send();
                         })

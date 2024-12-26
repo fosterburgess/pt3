@@ -2,8 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Const\TaskStatus;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource\RelationManagers;
+use App\Forms\CreateTask;
 use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -21,19 +23,7 @@ class TaskResource extends Resource
 
     public static function form(Form $form): Form
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('status')
-                    ->maxLength(255),
-                Forms\Components\Textarea::make('description')
-                    ->columnSpanFull(),
-                Forms\Components\Select::make('project_id')
-                    ->relationship('project', 'title')
-                    ->required(),
-            ]);
+        return CreateTask::addDefinition($form);
     }
 
     public static function table(Table $table): Table
@@ -62,10 +52,26 @@ class TaskResource extends Resource
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
+                Tables\Filters\TernaryFilter::make('project_id')
+                    ->boolean()
+                    ->options([
+                        '-' => 'All',
+                        '1' => 'No',
+                        '0' => 'Yes',
+                        ])
+                    ->label('Has Project?'),
+                Tables\Filters\SelectFilter::make('project')
+                    ->label('Project')
+                    ->multiple()
+                    ->preload()
+                    ->relationship('project', 'title'),
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+//                ->fillForm(function($livewire, array $data) {
+//                    dd($livewire);
+//                }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

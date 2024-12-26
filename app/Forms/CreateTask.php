@@ -3,6 +3,7 @@
 namespace App\Forms;
 
 use App\Const\TaskStatus;
+use App\Models\Project;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
@@ -36,6 +37,18 @@ class CreateTask
                             ->options(
                                 TaskStatus::OPTIONS
                             ),
+                        Select::make('project_id')
+                            ->label('Project')
+                            ->columnSpanFull()
+                            ->placeholder('No project')
+                            ->options(function () {
+                                return Project::query()
+                                    ->where('user_id', auth()->user()->id)
+                                    ->pluck('title', 'id');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->required(false),
                     ]),
                 Grid::make()
                     ->columnSpan(1)
