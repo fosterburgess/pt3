@@ -19,6 +19,8 @@ class TaskCalendarWidget extends CalendarWidget
     protected ?string $defaultEventClickAction = 'edit';
     protected bool $eventClickEnabled = true;
 
+    protected bool $eventDragEnabled = true;
+
     protected bool $dateClickEnabled = true;
 
     public function getDateClickContextMenuActions(): array
