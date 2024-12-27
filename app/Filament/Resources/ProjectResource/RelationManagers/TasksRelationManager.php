@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Const\TaskStatus;
 use App\Forms\CreateTask;
 use App\Models\Task;
+use Carbon\Carbon;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -59,12 +60,16 @@ class TasksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->label('Add task')
                     ->model(Task::class)
                     ->mutateFormDataUsing(function($data)  {
                         $data['user_id'] = Auth::user()->id;
                         return $data;
                     })
                     ->fillForm([
+                        'status' => TaskStatus::__DEFAULT,
+                        'start_date' => Carbon::now()->format('Y-m-d'),
+                        'due_date' => Carbon::now()->addDays(7)->format('Y-m-d'),
                         'user_id' => Auth::user()->id,
                         'project_id' => $this->ownerRecord->id,
                     ]),
