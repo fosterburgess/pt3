@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Const\TaskStatus;
 use App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Forms\CreateTask;
@@ -88,6 +89,13 @@ class ProjectResource extends Resource
                     ->icon('heroicon-o-plus')
                     ->label('Task')
                     ->form($form->getComponents())
+                    ->fillForm(function ($record, $data) {
+                        $data['project_id'] = $record->id;
+                        $data['status'] = TaskStatus::__DEFAULT;
+                        $data['start_date'] = Carbon::now()->format('Y-m-d');
+                        $data['due_date'] = Carbon::now()->addDays(7)->format('Y-m-d');
+                        return $data;
+                    })
                     ->mutateFormDataUsing(function($data, $record) {
                         $data['project_id'] = $record->id;
                         return $data;
