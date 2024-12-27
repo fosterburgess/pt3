@@ -55,6 +55,25 @@ class TaskCalendarWidget extends CalendarWidget
         parent::onEventClick($info, $action);
     }
 
+    public function onEventDrop(array $info = []): bool
+    {
+        // Don't forget to call the parent method to resolve the event record
+        parent::onEventDrop($info);
+
+        $task = $this->getEventRecord();
+        $task->start_date = Carbon::parse($info['event']['start']);
+        $task->due_date = Carbon::parse($info['event']['end']);
+        $task->save();
+
+        Notification::make()
+            ->body("Task moved to {$task->start_date->format('m/d/Y')}")
+            ->success()
+            ->send();
+        $this->refreshRecords();
+
+        return true;
+    }
+
     public function getEvents(array $fetchInfo = []): Collection|array
     {
         // get a list of Tasks for the current user
