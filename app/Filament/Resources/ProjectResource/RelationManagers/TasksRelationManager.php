@@ -4,6 +4,7 @@ namespace App\Filament\Resources\ProjectResource\RelationManagers;
 
 use App\Const\TaskStatus;
 use App\Forms\CreateTask;
+use App\Models\Task;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -58,11 +59,13 @@ class TasksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->model(Task::class)
                     ->mutateFormDataUsing(function($data)  {
                         $data['user_id'] = Auth::user()->id;
                         return $data;
                     })
                     ->fillForm([
+                        'user_id' => Auth::user()->id,
                         'project_id' => $this->ownerRecord->id,
                     ]),
             ])
