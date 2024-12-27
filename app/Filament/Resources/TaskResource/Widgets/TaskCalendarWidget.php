@@ -47,6 +47,7 @@ class TaskCalendarWidget extends CalendarWidget
                     ->success()
                     ->title('Task Created')
                     ->send();
+                $this->refreshRecords();
             })
         ];
 
