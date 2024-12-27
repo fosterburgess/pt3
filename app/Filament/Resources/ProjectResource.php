@@ -97,6 +97,7 @@ class ProjectResource extends Resource
                         return $data;
                     })
                     ->mutateFormDataUsing(function($data, $record) {
+                        $data['user_id'] = auth()->user()->id;
                         $data['project_id'] = $record->id;
                         return $data;
                     })
