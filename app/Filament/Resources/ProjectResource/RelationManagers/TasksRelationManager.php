@@ -13,6 +13,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class TasksRelationManager extends RelationManager
 {
@@ -57,6 +58,10 @@ class TasksRelationManager extends RelationManager
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
+                    ->mutateFormDataUsing(function($data)  {
+                        $data['user_id'] = Auth::user()->id;
+                        return $data;
+                    })
                     ->fillForm([
                         'project_id' => $this->ownerRecord->id,
                     ]),
