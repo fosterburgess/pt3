@@ -20,7 +20,7 @@ class TaskCalendarWidget extends CalendarWidget
 
     protected string $calendarView = 'dayGridMonth';
 
-    protected ?string $defaultEventClickAction = 'view';
+    protected ?string $defaultEventClickAction = 'edit';
     protected bool $eventClickEnabled = true;
 
     protected bool $dateClickEnabled = true;
@@ -54,24 +54,8 @@ class TaskCalendarWidget extends CalendarWidget
 
     public function onEventClick(array $info = [], ?string $action = null): void
     {
-        $form = Form::make($this);
-        $form = CreateTask::addDefinition($form);
-
-        EditAction::make('add-task')
-            ->model(Task::class)
-            ->form($form->getComponents())
-            ->fillForm(function($arguments, $data) {
-                $data['start_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->format('Y-m-d');
-                $data['due_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->addDays(7)?->format('Y-m-d');
-                $data['user_id'] = auth()->user()->id;
-                return $data;
-            });
-//        // only a view action handled
-////        dd($info);
-//        // do something on click
-//        // $info contains the event data:
-//        // $info['event'] - the event object
-//        // $info['view'] - the view object
+        $action ??= $this->getDefaultEventClickAction();
+        parent::onEventClick($info, $action);
     }
 
     public function getEvents(array $fetchInfo = []): Collection|array
@@ -89,6 +73,10 @@ class TaskCalendarWidget extends CalendarWidget
                 'due_date' => $task->due_date?->format('m/d/Y'),
                 'start' => $task->start_date->addHours(1),
                 'end' => $task->due_date->addHours(1),
+                'extendedProps' => [
+                    'model' => Task::class,
+                    'key' => $task->id,
+                ],
             ]);
         return $tasks->toArray();
     }
@@ -101,10 +89,6 @@ class TaskCalendarWidget extends CalendarWidget
 
     public function getSchema(?string $model = null): ?array
     {
-        // If you only work with one model type, you can ignore the $model parameter and simply return a schema
-        return [
-            TextInput::make('title')
-        ];
-
+        return CreateTask::getSchema();
     }
 }
