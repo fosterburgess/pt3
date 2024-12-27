@@ -80,7 +80,10 @@ class TaskCalendarWidget extends CalendarWidget
         // with the 'start' being the 'due_date' on a task
         // tasks without due dates won't show?
         $tasks = auth()->user()->tasks()
-            ->whereBetween('due_date', [$fetchInfo['start'], $fetchInfo['end']])
+            ->where(function($query) use ($fetchInfo) {
+                return $query->whereBetween('due_date', [$fetchInfo['start'], $fetchInfo['end']])
+                    ->orWhereBetween('start_date', [$fetchInfo['start'], $fetchInfo['end']]);
+            })
             ->whereNotNull('due_date')
             ->get()
             ->map(fn($task) => [
