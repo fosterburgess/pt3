@@ -5,10 +5,7 @@ namespace App\Filament\Resources\TaskResource\Widgets;
 use App\Forms\CreateTask;
 use App\Models\Task;
 use Carbon\Carbon;
-use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
-use Filament\Actions\EditAction;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Guava\Calendar\Widgets\CalendarWidget;
@@ -16,7 +13,6 @@ use Illuminate\Support\Collection;
 
 class TaskCalendarWidget extends CalendarWidget
 {
-//    protected static string $view = 'filament.resources.task-resource.widgets.task-calendar-widget';
 
     protected string $calendarView = 'dayGridMonth';
 
