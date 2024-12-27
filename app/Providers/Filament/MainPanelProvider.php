@@ -41,7 +41,6 @@ class MainPanelProvider extends PanelProvider
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
-                TaskCalendarWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
