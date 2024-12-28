@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Traits\ActivityLogTrait;
 use Guava\Calendar\Contracts\Eventable;
 use Guava\Calendar\ValueObjects\Event;
 use Illuminate\Database\Eloquent\Model;
@@ -11,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Task extends Model implements Eventable
 {
     use SoftDeletes;
+    use ActivityLogTrait;
 
     protected $guarded = ['id'];
 
