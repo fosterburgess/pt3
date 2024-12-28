@@ -2,13 +2,16 @@
 
 namespace App\Models;
 
+use App\Observers\TaskObserver;
 use App\Traits\ActivityLogTrait;
 use Guava\Calendar\Contracts\Eventable;
 use Guava\Calendar\ValueObjects\Event;
+use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+#[ObservedBy([TaskObserver::class])]
 class Task extends Model implements Eventable
 {
     use SoftDeletes;
