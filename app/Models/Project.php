@@ -32,4 +32,11 @@ class Project extends Model
     {
         return $this->hasMany(Task::class);
     }
+
+    public function openTasks(): HasMany
+    {
+        return $this->hasMany(Task::class)
+            ->where('status', '!=', 'completed');
+    }
+
 }

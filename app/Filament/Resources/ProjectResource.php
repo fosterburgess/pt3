@@ -79,9 +79,15 @@ class ProjectResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
+                    ->sortable()
                     ->formatStateUsing(fn($state) => $state?->format('m/d/Y')),
+                Tables\Columns\TextColumn::make('open_tasks_count')
+                    ->label('Open')
+                    ->sortable()
+                    ->counts('openTasks'),
                 Tables\Columns\TextColumn::make('tasks_count')
                     ->label('Tasks')
+                    ->sortable()
                     ->counts('tasks'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
