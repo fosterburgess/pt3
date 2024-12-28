@@ -6,6 +6,7 @@ use App\Forms\CreateTask;
 use App\Models\Task;
 use Carbon\Carbon;
 use Filament\Actions\CreateAction;
+use Filament\Actions\SelectAction;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Guava\Calendar\Widgets\CalendarWidget;
@@ -22,6 +23,25 @@ class TaskCalendarWidget extends CalendarWidget
     protected bool $eventDragEnabled = true;
 
     protected bool $dateClickEnabled = true;
+
+    public $projectFilter = null;
+
+    public function getHeaderActions(): array
+    {
+        return [
+            SelectAction::make('projectFilter')
+                ->label("Filter to project")
+                ->placeholder("All projects")
+                ->options(function() {
+                    return auth()->user()->projects()->pluck('title', 'id');
+                }),
+        ];
+    }
+
+    public function updatedProjectFilter()
+    {
+        $this->refreshRecords();
+    }
 
     public function getDateClickContextMenuActions(): array
     {
@@ -82,6 +102,7 @@ class TaskCalendarWidget extends CalendarWidget
         // with the 'start' being the 'due_date' on a task
         // tasks without due dates won't show?
         $tasks = auth()->user()->tasks()
+            ->when($this->projectFilter, fn($query) => $query->where('project_id', $this->projectFilter))
             ->where(function($query) use ($fetchInfo) {
                 return $query->whereBetween('due_date', [$fetchInfo['start'], $fetchInfo['end']])
                     ->orWhereBetween('start_date', [$fetchInfo['start'], $fetchInfo['end']]);
