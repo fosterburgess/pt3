@@ -19,6 +19,8 @@ return new class extends Migration
             $table->date('completed_date')->nullable();
             $table->text('description')->nullable();
             $table->integer('user_id');
+            $table->text('attachments')->nullable();
+            $table->text('attachment_file_names')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

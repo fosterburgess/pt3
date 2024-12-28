@@ -15,6 +15,8 @@ class Project extends Model
         'completed_date' => 'date',
         'start_date' => 'date',
         'due_date' => 'date',
+        'attachments' => 'array',
+        'attachment_file_names' => 'array',
     ];
 
     protected $guarded = ['id'];

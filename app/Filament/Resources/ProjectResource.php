@@ -9,6 +9,7 @@ use App\Forms\CreateTask;
 use App\Models\Project;
 use Carbon\Carbon;
 use Filament\Forms;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -42,14 +43,26 @@ class ProjectResource extends Resource
                     ->columnSpan(1)
                     ->schema([
                         Forms\Components\DatePicker::make('start_date')
+                            ->default(fn()=>Carbon::now())
                             ->reactive()
                             ->afterStateUpdated(fn (Forms\Set $set, $state) => $set('due_date', Carbon::parse($state)->addMonth()->format('Y-m-d')))
                             ->columnSpan(1),
                         Forms\Components\DatePicker::make('due_date')
+                            ->default(fn()=>Carbon::now()->addMonth())
                             ->columnSpan(1),
                         Forms\Components\DatePicker::make('completed_date')
                             ->columnSpan(1),
                         ]),
+                FileUpload::make("attachments")
+                    ->downloadable()
+                    ->preserveFilenames()
+                    ->previewable(false)
+                    ->storeFileNamesIn('attachment_file_names')
+                    ->disk(config('filesystem.default'))
+                    ->directory('task-attachments')
+                    ->columnSpanFull()
+                    ->maxFiles(12)
+                    ->multiple(),
             ]);
     }
 

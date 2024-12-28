@@ -5,6 +5,7 @@ namespace App\Forms;
 use App\Const\TaskStatus;
 use App\Models\Project;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -30,7 +31,8 @@ class CreateTask
     {
         return [
             Grid::make()
-                ->columnSpan(1)
+                ->columnSpanFull()
+                ->columns(2)
                 ->schema([
                     TextInput::make('title')
                         ->columnSpanFull()
@@ -39,39 +41,55 @@ class CreateTask
                     Textarea::make('description')
                         ->columnSpanFull()
                         ->rows(4),
-                    Select::make('status')
+                    Grid::make()
                         ->columnSpanFull()
-                        ->default(TaskStatus::__DEFAULT)
-                        ->options(
-                            TaskStatus::OPTIONS
-                        ),
-                    Select::make('project_id')
-                        ->label('Project')
-                        ->columnSpanFull()
-                        ->placeholder('No project')
-                        ->options(function () {
-                            return Project::query()
-                                ->where('user_id', auth()->user()->id)
-                                ->pluck('title', 'id');
-                        })
-                        ->searchable()
-                        ->preload()
-                        ->required(false),
+                        ->columns(2)
+                        ->schema([
+                            Select::make('status')
+                                ->columns(1)
+                                ->default(TaskStatus::__DEFAULT)
+                                ->options(
+                                    TaskStatus::OPTIONS
+                                ),
+                            Select::make('project_id')
+                                ->label('Project')
+                                ->columns(1)
+                                ->placeholder('No project')
+                                ->options(function () {
+                                    return Project::query()
+                                        ->where('user_id', auth()->user()->id)
+                                        ->pluck('title', 'id');
+                                })
+                                ->searchable()
+                                ->preload()
+                                ->required(false),
+                        ])
                 ]),
             Grid::make()
-                ->columnSpan(1)
+                ->columns(3)
+                ->columnSpan(3)
                 ->schema([
                     DatePicker::make('start_date')
                         ->columnSpan(1)
                         ->default(fn() => now()),
                     DatePicker::make('due_date')
-                        ->columns(2)
+                        ->columns(1)
                         ->columnSpan(1)
                         ->default(fn() => now()->addDays(7)),
                     DatePicker::make('completed_date')
                         ->columns(2)
                         ->columnSpan(1),
                 ]),
+            FileUpload::make("attachments")
+                ->downloadable()
+                ->preserveFilenames()
+                ->previewable(false)
+                ->storeFileNamesIn('attachment_file_names')
+                ->disk(config('filesystem.default'))
+                ->directory('task-attachments')
+                ->columnSpanFull()
+                ->maxFiles(12)
+                ->multiple(),
         ];
     }
 }

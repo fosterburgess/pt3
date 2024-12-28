@@ -18,6 +18,8 @@ class Task extends Model implements Eventable
         'completed_date' => 'date',
         'start_date' => 'date',
         'due_date' => 'date',
+        'attachments' => 'array',
+        'attachment_file_names' => 'array',
     ];
 
     public function project(): BelongsTo

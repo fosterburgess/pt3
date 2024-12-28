@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->integer('user_id');
+            $table->text('attachments')->nullable();
+            $table->text('attachment_file_names')->nullable();
             $table->string('status')->nullable();
             $table->date('start_date')->nullable();
             $table->date('due_date')->nullable();
