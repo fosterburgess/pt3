@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Const\TaskStatus;
+use App\Events\TaskCompleted;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Filament\Resources\TaskResource\RelationManagers;
 use App\Filament\Resources\TaskResource\Widgets\TaskCalendarWidget;
@@ -12,6 +13,7 @@ use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -98,6 +100,15 @@ class TaskResource extends Resource
                     ->relationship('project', 'title'),
             ])
             ->actions([
+                Tables\Actions\Action::make('mark_complete')
+                    ->action(function($record) {
+                        $record->status = TaskStatus::COMPLETED;
+                        $record->save();
+                        Notification::make()
+                            ->body("Task marked as completed")
+                            ->color('success')
+                            ->send();
+                    }),
                 Tables\Actions\Action::make('activity')
                     ->slideOver()
                     ->modalSubmitAction(false)
