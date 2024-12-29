@@ -7,7 +7,7 @@
                 class="mt-4"
                 wire:click="submit"
                 type="button">
-            {{ __('Add note') }}
+            {{ __('Add quick note') }}
         </x-filament::button>
 
     </x-filament::section>
