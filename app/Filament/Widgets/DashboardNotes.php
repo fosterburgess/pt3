@@ -27,8 +27,9 @@ class DashboardNotes extends Widget implements HasForms
             Placeholder::make("header")
                 ->hiddenLabel()
                 ->content('Quick notes')
-                ->extraAttributes(['class' => 'text-xl font-bold']),
+                ->extraAttributes(['class' => 'fi-ta-header fi-ta-header-heading text-lg font-bold text-gray-950 dark:text-white']),
             Textarea::make('note')
+                ->rows(8)
                 ->hiddenLabel()
                 ->columnSpanFull(),
         ];
