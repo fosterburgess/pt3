@@ -9,6 +9,7 @@ use Guava\Calendar\ValueObjects\Event;
 use Illuminate\Database\Eloquent\Attributes\ObservedBy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 #[ObservedBy([TaskObserver::class])]
@@ -30,6 +31,11 @@ class Task extends Model implements Eventable
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function notes(): HasMany
+    {
+        return $this->hasMany(Note::class);
     }
 
     public function toEvent(): Event|array {

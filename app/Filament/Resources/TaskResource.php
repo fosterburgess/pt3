@@ -190,7 +190,7 @@ class TaskResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\NotesRelationManager::class,
         ];
     }
 
@@ -201,7 +201,7 @@ class TaskResource extends Resource
             'calendar' => Pages\ListTasksCalendar::route('/cal'),
             'create' => Pages\CreateTask::route('/create'),
             'view' => Pages\ViewTask::route('/{record}'),
-//            'edit' => Pages\EditTask::route('/{record}/edit'),
+            'edit' => Pages\EditTask::route('/{record}/edit'),
         ];
     }
 
