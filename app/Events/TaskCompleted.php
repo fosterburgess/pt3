@@ -19,7 +19,8 @@ class TaskCompleted
      * Create a new event instance.
      */
     public function __construct(
-        public Task $task
+        public Task $task,
+        public ?string $closingNote = null,
     )
     {
         //

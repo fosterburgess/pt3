@@ -15,6 +15,8 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -100,24 +102,37 @@ class TaskResource extends Resource
                     ->relationship('project', 'title'),
             ])
             ->actions([
-                Tables\Actions\Action::make('mark_complete')
-                    ->action(function($record) {
-                        $record->status = TaskStatus::COMPLETED;
-                        $record->save();
-                        Notification::make()
-                            ->body("Task marked as completed")
-                            ->color('success')
-                            ->send();
-                    }),
-                Tables\Actions\Action::make('activity')
-                    ->slideOver()
-                    ->modalSubmitAction(false)
-                    ->modalCancelAction(false)
-                    ->infolist(
-                        function ($record) {
-                            $il = Infolist::make();
-                            $il->state(['activities' => $record->activities->reverse()->toArray()]);
-                            $il->schema([
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\Action::make('mark_complete')
+                        ->visible(fn($record) => $record->status !== TaskStatus::COMPLETED)
+                        ->modalWidth(MaxWidth::Medium)
+                        ->modalSubmitActionLabel('Mark as completed')
+                        ->form([
+                            Forms\Components\Textarea::make('note')
+                                ->label('Closing note')
+                                ->helperText("Add any notes relevant to this task's completion")
+                                ->label('Note')
+                                ->rows(3),
+                        ])
+                        ->action(function (Task $record) {
+                            TaskCompleted::dispatch($record);
+
+                            Notification::make()
+                                ->body("Task marked as completed")
+                                ->color('success')
+                                ->send();
+                        }),
+                    Tables\Actions\Action::make('activity')
+                        ->slideOver()
+                        ->modalSubmitAction(false)
+                        ->modalCancelAction(false)
+                        ->infolist(
+                            function ($record) {
+                                $il = Infolist::make();
+                                $il->state(['activities' => $record->activities->reverse()->toArray()]);
+                                $il->schema([
                                     ActivitySection::make('activities')
                                         ->headingVisible(false)
                                         ->schema([
@@ -131,25 +146,30 @@ class TaskResource extends Resource
                                                 ->date('F j, Y', 'Asia/Manila')
                                                 ->placeholder('No date is set.'),
                                             ActivityIcon::make('event')
-                                                ->icon(fn (string | null $state): string | null => match ($state) {
+                                                ->icon(fn(string|null $state): string|null => match ($state) {
                                                     'created' => 'heroicon-m-light-bulb',
                                                     'updated' => 'heroicon-m-bolt',
                                                     'deleted' => 'heroicon-m-document-magnifying-glass',
                                                     default => null,
                                                 })
-                                                ->color(fn (string | null $state): string | null => match ($state) {
+                                                ->color(fn(string|null $state): string|null => match ($state) {
                                                     'created' => 'purple',
                                                     'updated' => 'info',
                                                     'deleted' => 'warning',
                                                     default => 'gray',
-                                                }),                                        ]),
+                                                }),]),
 
                                 ]);
 
-                            return $il;
-                        }),
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make()
+                                return $il;
+                            }),
+
+                ])
+                    ->button()
+                    ->color('warning')
+                    ->icon('heroicon-m-chevron-down')
+                    ->iconPosition(IconPosition::After)
+                    ->label("More"),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

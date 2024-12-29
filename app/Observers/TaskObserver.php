@@ -2,6 +2,7 @@
 
 namespace App\Observers;
 
+use App\Const\TaskStatus;
 use App\Events\TaskCompleted;
 use App\Models\Task;
 
@@ -23,7 +24,7 @@ class TaskObserver
         if($task->wasChanged('status'))
         {
             if($task->isDirty('status')
-                && $task->status === 'completed')
+                && $task->status === TaskStatus::COMPLETED)
             {
                 TaskCompleted::dispatch($task);
             }

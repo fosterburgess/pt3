@@ -2,6 +2,7 @@
 
 namespace App\Listeners;
 
+use App\Const\TaskStatus;
 use App\Events\TaskCompleted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -23,6 +24,7 @@ class TaskCompletedListener
     {
         $task = $event->task;
         $task->completed_date = now();
+        $task->status = TaskStatus::COMPLETED;
         $task->saveQuietly();
     }
 }
