@@ -8,6 +8,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class NotesRelationManager extends RelationManager
@@ -33,6 +34,7 @@ class NotesRelationManager extends RelationManager
     public function table(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->recordTitleAttribute('note')
             ->columns([
                 Tables\Columns\TextColumn::make('note')
@@ -59,4 +61,5 @@ class NotesRelationManager extends RelationManager
                 ]),
             ]);
     }
+
 }
