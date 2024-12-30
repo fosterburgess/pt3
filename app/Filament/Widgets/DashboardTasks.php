@@ -7,6 +7,7 @@ use App\Forms\CreateTask;
 use App\Models\Task;
 use Carbon\Carbon;
 use Filament\Actions\CreateAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Tables;
@@ -39,6 +40,7 @@ class DashboardTasks extends BaseWidget
                     ->title('Task Created')
                     ->send();
             });
+
         return $table
             ->heading("Upcoming Tasks")
             ->headerActions([
@@ -54,6 +56,11 @@ class DashboardTasks extends BaseWidget
                     ->where('status', '!=', TaskStatus::COMPLETED)
                     ->orderBy('due_date', 'asc')
             )
+            ->actionsColumnLabel('Actions')
+            ->actions([
+                Tables\Actions\EditAction::make()
+                    ->url(fn($record)=>route('filament.main.resources.tasks.edit', ['record' => $record]),),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('title'),
                 Tables\Columns\TextColumn::make('project.title'),
@@ -61,4 +68,16 @@ class DashboardTasks extends BaseWidget
                     ->date(),
             ]);
     }
+
+    public function getTableActionsColumnLabel(): ?string
+    {
+        return 'Actions';
+    }
+
+    public function getTableActions(): array
+    {
+        return [
+            EditAction::make(),
+            EditAction::make(),
+        ];}
 }
