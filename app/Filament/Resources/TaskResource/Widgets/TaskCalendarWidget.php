@@ -78,6 +78,7 @@ class TaskCalendarWidget extends CalendarWidget
                 ->model(Task::class)
                 ->form($form->getComponents())
                 ->fillForm(function ($arguments, $data) {
+                    $data['status'] = TaskStatus::__DEFAULT;
                     $data['start_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->format('Y-m-d');
                     $data['due_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->addDays(7)?->format('Y-m-d');
                     $data['user_id'] = auth()->user()->id;
