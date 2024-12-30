@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TaskResource\Widgets;
 
+use App\Const\TaskStatus;
 use App\Forms\CreateTask;
 use App\Models\Task;
 use Carbon\Carbon;
@@ -26,10 +27,17 @@ class TaskCalendarWidget extends CalendarWidget
 
     public $projectFilter = null;
     public string $taskRange = 'due';
+    public string $incompleteOrAll = 'incomplete';
 
     public function getHeaderActions(): array
     {
         return [
+            SelectAction::make('incompleteOrAll')
+                ->label("Include completed tasks")
+                ->options([
+                    'incomplete' => 'Only open tasks',
+                    'all' => 'Include completed tasks',
+                ]),
             SelectAction::make('taskRange')
                 ->label("Task range")
                 ->options([
@@ -39,7 +47,7 @@ class TaskCalendarWidget extends CalendarWidget
             SelectAction::make('projectFilter')
                 ->label("Filter to project")
                 ->placeholder("All projects")
-                ->options(function() {
+                ->options(function () {
                     return auth()->user()->projects()->pluck('title', 'id');
                 }),
         ];
@@ -49,7 +57,13 @@ class TaskCalendarWidget extends CalendarWidget
     {
         $this->refreshRecords();
     }
+
     public function updatedTaskRange()
+    {
+        $this->refreshRecords();
+    }
+
+    public function updatedIncompleteOrAll()
     {
         $this->refreshRecords();
     }
@@ -63,21 +77,21 @@ class TaskCalendarWidget extends CalendarWidget
             CreateAction::make('add-task')
                 ->model(Task::class)
                 ->form($form->getComponents())
-                ->fillForm(function($arguments, $data) {
+                ->fillForm(function ($arguments, $data) {
                     $data['start_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->format('Y-m-d');
                     $data['due_date'] = Carbon::parse(data_get($arguments, 'dateStr'))?->addDays(7)?->format('Y-m-d');
                     $data['user_id'] = auth()->user()->id;
                     return $data;
                 })
-            ->action(function ($data) {
-                $data['user_id'] = auth()->user()->id;
-                Task::create($data);
-                Notification::make()
-                    ->success()
-                    ->title('Task Created')
-                    ->send();
-                $this->refreshRecords();
-            })
+                ->action(function ($data) {
+                    $data['user_id'] = auth()->user()->id;
+                    Task::create($data);
+                    Notification::make()
+                        ->success()
+                        ->title('Task Created')
+                        ->send();
+                    $this->refreshRecords();
+                })
         ];
 
     }
@@ -113,8 +127,9 @@ class TaskCalendarWidget extends CalendarWidget
         // with the 'start' being the 'due_date' on a task
         // tasks without due dates won't show?
         $tasks = auth()->user()->tasks()
+            ->when($this->incompleteOrAll === 'incomplete', fn($query) => $query->where('status', '!=', TaskStatus::COMPLETED))
             ->when($this->projectFilter, fn($query) => $query->where('project_id', $this->projectFilter))
-            ->where(function($query) use ($fetchInfo) {
+            ->where(function ($query) use ($fetchInfo) {
                 return $query->whereBetween('due_date', [$fetchInfo['start'], $fetchInfo['end']])
                     ->orWhereBetween('start_date', [$fetchInfo['start'], $fetchInfo['end']]);
             })
