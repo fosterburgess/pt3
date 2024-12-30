@@ -25,10 +25,17 @@ class TaskCalendarWidget extends CalendarWidget
     protected bool $dateClickEnabled = true;
 
     public $projectFilter = null;
+    public string $taskRange = 'due';
 
     public function getHeaderActions(): array
     {
         return [
+            SelectAction::make('taskRange')
+                ->label("Task range")
+                ->options([
+                    'full' => 'Full range',
+                    'due' => 'Due date only',
+                ]),
             SelectAction::make('projectFilter')
                 ->label("Filter to project")
                 ->placeholder("All projects")
@@ -39,6 +46,10 @@ class TaskCalendarWidget extends CalendarWidget
     }
 
     public function updatedProjectFilter()
+    {
+        $this->refreshRecords();
+    }
+    public function updatedTaskRange()
     {
         $this->refreshRecords();
     }
@@ -113,7 +124,7 @@ class TaskCalendarWidget extends CalendarWidget
                 'id' => $task->id,
                 'title' => $task->title,
                 'due_date' => $task->due_date?->format('m/d/Y'),
-                'start' => $task->start_date->addHours(1),
+                'start' => $this->taskRange === 'full' ? $task->start_date->addHours(1) : $task->due_date->addHours(1),
                 'end' => $task->due_date->addHours(1),
                 'extendedProps' => [
                     'model' => Task::class,
